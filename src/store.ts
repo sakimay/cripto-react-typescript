@@ -6,6 +6,7 @@ import { fetchCurrentCryptoPrice, getCryptos } from "./services/CryptoService";
 type CryptoStore = {
     cryptocurrencies: Cryptocurrency[],
     result: CryptoPrice,
+    loading: boolean,
     fetchCryptos: () => Promise<void>,
     fetchData: (pair: Pair) => Promise<void>
 }
@@ -13,6 +14,7 @@ type CryptoStore = {
 export const useCriptoStore = create<CryptoStore>()(devtools((set) => ({
     cryptocurrencies: [],
     result: {} as CryptoPrice,
+    loading: false,
     fetchCryptos: async () => {
         const result = await getCryptos()
         set(() => ({
@@ -20,7 +22,11 @@ export const useCriptoStore = create<CryptoStore>()(devtools((set) => ({
         }))
     },
     fetchData: async (pair) => {
+        set(() => ({loading: true}))
         const result = await fetchCurrentCryptoPrice(pair);
-        set(() => ({result}))
+        set(() => ({
+            result,
+            loading: false
+        }))
     }
 })))

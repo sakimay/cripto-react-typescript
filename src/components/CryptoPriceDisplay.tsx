@@ -1,16 +1,19 @@
 import { useMemo } from "react";
 import { useCriptoStore } from "../store"
+import Spinner from "./Spinner";
 export default function CryptoPriceDisplay() {
     const result = useCriptoStore((state) => state.result);
-    const hasResult = useMemo(() => !Object.values(result).includes(''), [result])
+    const loading = useCriptoStore((state) => state.loading);
+    const hasResult = useMemo(() => Object.values(result).length > 0, [result])
+    
     return (
         <div className="result-wrapper">
-            {hasResult && (
+            {loading ? <Spinner /> : (hasResult && (
                 <>
                     <h2>Cotización</h2>
                     <div className="result">
                         <img
-                            src={`https://cryptocompare.com/${result.IMAGEURL}`} 
+                            src={`https://cryptocompare.com/${result.IMAGEURL}`}
                             alt="Imagen Cryptomoneda"
                         />
                         <div>
@@ -22,7 +25,7 @@ export default function CryptoPriceDisplay() {
                         </div>
                     </div>
                 </>
-            )}
+            ))}
         </div>
     )
 }
